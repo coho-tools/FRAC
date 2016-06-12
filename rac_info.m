@@ -1,35 +1,4 @@
-#/bin/sh
-echo ""
-echo "Installing COHO Reachabilty Analysis Tool ......" 
-echo ""
 
-echo "====Step0: Set environment variable RAC_HOME====" 
-RAC_HOME=`pwd`
-export RAC_HOME
-echo $RAC_HOME
-echo "" 
-
-echo "====Step1: Install JANS ===" 
-git clone https://github.com/dreamable/JANS.git
-cd JANS
-sh install.sh
-
-echo "====Step2: Generating RAC configuration file ====" 
-cd $RAC_HOME
-while true; do 
-	echo "The commerical LP solver CPLEX may speedup the RAC computation."
-	echo "  We use the CPLEXINT interface to use CPLEX in Matlab." 
-	echo "  For more details, please check http://control.ee.ethz.ch/~hybrid/cplexint.php."
-	echo "  If you want to use CPLEX solver, please configurate your system to make cplexint.m under LinearProgramming/Solver/CPLEX work." 
-	read -p "Is CPLEX LP solver available in your system? " yn 
-	case $yn in 
-		[Yy]* ) has_cplex=1; break;; 
-	  [Nn]* ) has_cplex=0; break;;
-	  * ) echo "Please answer yes or no.";; 
-	esac 
-done
-
-echo "
 % function val = rac_info(field)
 %   This function returns read-only information for RAC, including: 
 %     rac_home:  root path of CAR software 
@@ -59,7 +28,7 @@ function val = rac_info(field)
 end
 function  info = rac_info_init
   % RAC root path
-  rac_home='`pwd`'; 
+  rac_home='/ubc/cs/home/c/chaoyan/FRAC'; 
 
   % RAC directories 
   rac_dirs = {
@@ -75,7 +44,7 @@ function  info = rac_info_init
     'Utils/Logger'};
 
   % cplex is avail in the system
-  has_cplex = $has_cplex; 
+  has_cplex = 0; 
   
   % current user
   [~,user] = unix('whoami');
@@ -92,10 +61,4 @@ function  info = rac_info_init
                 'user',user, 'has_cplex', has_cplex, ...
                 'sys_path', sys_path); 
 end % rac_info
-" > rac_info.m
 
-echo "You can update the configurations later by editing rac_info.m file."
-
-echo ""
-echo "COHO Reachabilty Analysis Tool Installed!" 
-echo ""
